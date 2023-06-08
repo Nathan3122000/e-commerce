@@ -1,0 +1,56 @@
+@extends('layouts.admin')
+@section('title','Order Management')
+@section('content')
+    <div class="card">
+        <div class="card-header">
+            <a href="{{ route('order.create') }}" class="btn btn-sm btn-success"><i class="fas fa-plus"></i> Create</a>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table nowrap table-bordered">
+                    <thead>
+                        <tr>
+                            <th>No.</th>
+                            <th>Customer</th>
+                            <th>Payment Method</th>
+                            <th>Shipment</th>
+                            <th>Paid Date</th>
+                            <th>Ship Date</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($data as $item)
+                        <tr>
+                            <td>{{ $loop->iteration }}</td>
+                            <td>{{ $item->customer->user->name }}</td>
+                            <td>{{ $item->payment_method->payment_method }}</td>
+                            <td>{{ $item->shipment->company_name }}</td>
+                            <td>{{ is_null($item->paid_date)?'-':date('d/m/Y',strtotime($item->paid_date)) }}</td>
+                            <td>{{ is_null($item->ship_date)?'-':date('d/m/Y',strtotime($item->ship_date)) }}</td>
+                            <td>{{ $item->status }}</td>
+                            <td>
+                                <div class="btn-group">
+                                    <a href="{{ route('order.edit',$item) }}" class="btn btn-sm btn-primary"><i class="fas fa-pencil-alt"></i> Edit</a>
+                                    <form action="{{ route('order.destroy',$item) }}" method="post">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button class="btn btn-sm btn-danger" type="submit" onclick="return confirm('are you sure?')"><i class="fas fa-trash-alt"></i> Hapus</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+@endsection
+
+@push('script')
+<script>
+    $('.table').dataTable();
+</script>
+@endpush
